@@ -5,7 +5,12 @@ const tracks=[
 ];
 const songs=document.querySelector("#songs"),enter=document.querySelector("#enter"),hint=document.querySelector("#hint"),audio=document.querySelector("#audio");
 const site=document.querySelector("#site"),intro=document.querySelector("#intro"),player=document.querySelector("#player");
+const moonIntro=document.querySelector("#moon-intro"),moonEnter=document.querySelector("#moonEnter");
 let selected=null;
+moonEnter?.addEventListener("click",()=>{
+  moonIntro.classList.add("moon-leaving");
+  setTimeout(()=>moonIntro.remove(),900);
+});
 tracks.forEach((t,i)=>{const el=document.createElement("div");el.className="song";el.innerHTML=`<span class="no">0${i+1}</span><div><strong>${t.title}</strong><small>${t.artist}</small></div><span class="sel">SELECT</span>`;el.onclick=()=>{document.querySelectorAll(".song").forEach(x=>x.classList.remove("selected"));document.querySelectorAll(".sel").forEach(x=>x.textContent="SELECT");el.classList.add("selected");el.querySelector(".sel").textContent="SELECTED";selected=t;enter.disabled=false;hint.textContent="your soundtrack is ready"};songs.appendChild(el)});
 enter.onclick=async()=>{if(!selected)return;audio.src=selected.file;document.querySelector("#track").textContent=`${selected.title} — ${selected.artist}`;try{await audio.play()}catch(e){}intro.style.transition="opacity 1.1s";intro.style.opacity="0";setTimeout(()=>{intro.remove();site.classList.remove("hidden");player.classList.add("show");reveal()},1100)};
 document.querySelector("#playPause").onclick=()=>audio.paused?audio.play():audio.pause();
@@ -23,13 +28,5 @@ function reveal(){
  const envelope=document.querySelector(".envelope-link");
  if(envelope){const envelopeObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("magic-arrived");envelopeObserver.unobserve(entry.target)}}),{threshold:.35});envelopeObserver.observe(envelope)}
 }
-document.body.style.overflow="hidden";
-
-// Re-enable scrolling after the intro is dismissed.
-enter.addEventListener("click",()=>{
-  if(!selected)return;
-  setTimeout(()=>{document.body.style.overflow=""},1100);
-});
-
 const flowerForm=document.querySelector("#flowerForm");
 if(flowerForm){flowerForm.addEventListener("submit",event=>{event.preventDefault();const address=document.querySelector("#address").value.trim();if(!address)return;document.querySelector("#flowerMessage").textContent="A little hint has been tucked away. Flowers may be on their way. ✽";flowerForm.reset()})}
